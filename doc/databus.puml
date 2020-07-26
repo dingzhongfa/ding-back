@@ -1,0 +1,23 @@
+@startuml
+:EtlListener.onEvent;
+partition NsqEtlHandler{
+:NsqEtlHandler.handle;
+:NsqEtlHandler.doHandle;
+partition XXOONsqBiz{
+:XXOONsqBiz.process;
+:XXOONsqBiz.excute;
+partition XXOOEtl{
+:XXOOEtl.excute;
+:XXOOEtl.etl;
+partition XXOOEtl.etl{
+:XXOOExtract.excute;
+:XXOOTransform.excute;
+:XXOOLoad.excute;
+}
+}
+}
+}
+
+
+
+@enduml
