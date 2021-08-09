@@ -336,4 +336,8 @@ zk分布式锁，获取不到锁，注册个监听器即可，不需要不断主
 * yz-fin-shield
 内存 2G  cpu
 
+== 好文
+
+https://blog.csdn.net/fu123123fu/article/details/81208847  zookeeper中的ZAB协议
+
 
