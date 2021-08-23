@@ -2,6 +2,27 @@
 
 == JDK
 
+=== 管程模型
+
+管程模型分为三种（Java选择了MESA管程模型）：
+
+1）、Hasen模型
+
+    Hasen模型要求notify放到最后，这样T2线程通知T1后，T2线程就结束了，然后T1执行完，这样就能保证同一时刻只有一个线程在执行。
+
+2）、Hoare模型
+
+    Hoare模型里面，T2线程通知完T1线程后，T2马上阻塞，T1马上执行；等T1执行完之后再唤醒T2线程，也能保证同一时刻只有一个线程在执行，但是T2多了一次阻塞唤醒操作。
+
+3）、MESA管程模型（Java使用MESA模型实现）
+
+    MESA模型中，T2唤醒T1之后，T2还是会接着执行，T1并不立即执行，仅仅是从条件变量队列到等待队列中。
+
+    好处：notify（或notifyAll）、signal（或signalAll）不用放到代码的最后，T2也没有多余的阻塞唤醒操作
+————————————————
+版权声明：本文为CSDN博主「it_lihongmin」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/it_lihongmin/article/details/109190265
+
 == JVM
 
 == MYSQL
@@ -339,5 +360,19 @@ zk分布式锁，获取不到锁，注册个监听器即可，不需要不断主
 == 好文
 
 https://blog.csdn.net/fu123123fu/article/details/81208847  zookeeper中的ZAB协议
+https://cloud.tencent.com/developer/article/1706000     Druid ：高性能、列式的分布式数据存储
+https://kafka.apachecn.org/documentation.html    kafka中文网
+http://c.biancheng.net/design_pattern/      设计模式
+https://www.zsdocx.com/p-1747656.html       规则引擎
+https://www.cnblogs.com/xdyixia/p/9364247.html     synchronized
+https://www.cnblogs.com/winclpt/articles/10873024.html   深入理解CPU上下文切换
+https://cloud.tencent.com/developer/article/1560061  DDD
+https://juejin.cn/post/6844903828312047624   service mesh  先进思想拥抱者
+https://blog.csdn.net/qqqqq1993qqqqq/article/details/71882733 深入理解G1
+https://www.jianshu.com/p/5116a7acb866 三色标记法
+https://blog.csdn.net/qq_18649209/article/details/79582722 很好的一个代码示例
+https://www.cnblogs.com/dingzhongfa/ 个人博客
 
 
+=== 金融业务
+https://zhuanlan.zhihu.com/p/361848632 支付牌照
