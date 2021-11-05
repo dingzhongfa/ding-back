@@ -11,6 +11,7 @@ import java.util.List;
  */
 public class SortUtils {
 
+
     public static void selectSort(int[] arr) {
         int n = arr.length;
         for (int i = 0; i < arr.length - 1; i++) {
@@ -24,6 +25,11 @@ public class SortUtils {
             arr[i] = arr[min];
             arr[min] = temp;
         }
+    }
+
+
+    public static  void  bubbleSort(int [] arr){
+
     }
 
 

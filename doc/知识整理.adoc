@@ -25,7 +25,30 @@
 
 == JVM
 
+Hello.class文件的组成结构
+类加载系统是如何工作的？
+JVM的实例怎么放？放在那里？
+在程序外如何获取堆栈，在程序里如何获取堆栈？
+方法区放哪些东西？
+为什么要分代？
+GC算法有哪些？
+CMS/G1算法原理分别是啥？分别适合什么样的场景？
+Hello.class文件和反射有什么关系？
+阅读类加载系统的源码（网上90%的文章都是错的，错在哪里？）
+双亲委派机制是什么？为什么叫双亲？
+AOP和栈如何对应起来？
+基本理论：GC设计思路
+回收算法
+收集器
+分代思路
+
 == MYSQL
+
+=== 日志
+
+MySQL中有六种日志文件，分别是：重做日志（redo log）、回滚日志（undo log）、二进制日志（binlog）、错误日志（errorlog）、慢查询日志（slow query log）、一般查询日志（general log），中继日志（relay log）。
+
+其中重做日志和回滚日志与事务操作息息相关，二进制日志也与事务操作有一定的关系，这三种日志，对理解MySQL中的事务操作有着重要的意义。
 
 === 脏读、幻读、不可重复读
 . 脏读 脏读即为事务1第二次读取时,读到了事务2未提交的数据。若事务2回滚,则事务1第二次读取时,读到了脏数据。 脏读
@@ -367,11 +390,18 @@ https://www.zsdocx.com/p-1747656.html       规则引擎
 https://www.cnblogs.com/xdyixia/p/9364247.html     synchronized
 https://www.cnblogs.com/winclpt/articles/10873024.html   深入理解CPU上下文切换
 https://cloud.tencent.com/developer/article/1560061  DDD
-https://juejin.cn/post/6844903828312047624   service mesh  先进思想拥抱者
+https://juejin.cn/post/6844903828312047624   service mesh
 https://blog.csdn.net/qqqqq1993qqqqq/article/details/71882733 深入理解G1
 https://www.jianshu.com/p/5116a7acb866 三色标记法
 https://blog.csdn.net/qq_18649209/article/details/79582722 很好的一个代码示例
 https://www.cnblogs.com/dingzhongfa/ 个人博客
+https://leetcode.com/discuss/explore/august-leetcoding-challenge-2021/1377689/August-LeetCoding-Challenge-Official-Solution-Articles leetcode
+https://www.bilibili.com/video/av589969340   ZGC实战视频
+https://zhuanlan.zhihu.com/p/80220924 AKF
+https://www.cnblogs.com/xenny/p/9801703.html 线段树
+https://www.cnblogs.com/wangyuliang/p/9216365.html 弗洛伊德算法
+https://www.xttblog.com/?p=2632 RETE
+
 
 
 === 金融业务
