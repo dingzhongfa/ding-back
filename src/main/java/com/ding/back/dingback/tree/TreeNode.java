@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class TreeNode {
 
-    private int value;
+    private Integer value;
 
     private TreeNode left;
 

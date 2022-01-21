@@ -2,6 +2,57 @@
 
 == JDK
 
+=== HashMap加载因子为什么是0.75？转化红黑树阈值为8？
+
+加载因子是哈希表在其容量自动增加之前可以达到多满的一种尺度，它衡量的是一个散列表的空间的使用程度，负载因子越大表示散列表的装填程度越高，反之愈小。
+
+对于使用链表法的散列表来说，查找一个元素的平均时间是 O(1+a)。因此如果负载因子越大，对空间的利用更充分，然而后果是查找效率的降低；如果负载因子太小，那么散列表的数据将过于稀疏，对空间造成严重浪费。
+
+如果你看过源代码，你会发现在初始条件下，HashMap在时间和空间两者间折中选择了0.75。
+
+[[app-listing]]
+----
+/**
+* The load factor used when none specified in constructor.
+*/
+
+static final float DEFAULT_LOAD_FACTOR = 0.75f;
+----
+
+
+但是为什么一定是0.75？而不是0.8，0.6，这里有一个非常重要的概念：泊松分布。
+
+相信大家都学过概率论，对这个大名鼎鼎的定律感觉应该是既熟悉又陌生。本篇文章的重点不是为大家普及概率论知识，这里就简单介绍下。
+
+泊松分布是最重要的离散分布之一，它多出现在当X表示在一定的时间或空间内出现的事件个数这种场合。
+
+举个简单的例子，假如你一个老板，新开张了一家酒店，这个时候应该如何准备一天所用的食材呢？
+
+准备的太多，最后卖不掉这么多菜只能浪费扔掉；准备不够，又接不了生意。但是你有很多同行和朋友，他们会告诉你很多经验。
+
+比如把一天分成几个时间段，上午、下午、晚上每个时间段大概会来多少个客人，每一桌大概会点几个菜。综合下来，就可以大致知道在一天的时间内，估计出需要准备的食材数量。
+
+我们接下来看看 HashMap 源码注释的原话：
+----
+Ideally, under random hashCodes, the frequency of nodes in bins follows a Poisson distribution with a parameter of about 0.5 on average for the default resizing threshold of 0.75, although with a large variance because of resizing granularity. Ignoring variance, the expected occurrences of list size k are (exp(-0.5) * pow(0.5, k) / factorial(k)).
+0: 0.60653066
+1: 0.30326533
+2: 0.07581633
+3: 0.01263606
+4: 0.00157952
+5: 0.0001579
+6: 0.00001316
+7: 0.00000094
+8: 0.00000006
+more: less than 1 in ten million
+----
+
+翻译过来说的是，在理想情况下,使用随机哈希码，节点出现的频率在 hash 桶中遵循泊松分布。
+
+对照桶中元素个数和概率的表，可以看到当用 0.75 作为加载因子时，桶中元素到达 8 个的时候，概率已经变得非常小，因此每个碰撞位置的链表长度超过 8 个是几乎不可能的，因此在链表节点到达 8 时才开始转化为红黑树。
+
+
+
 === 管程模型
 
 管程模型分为三种（Java选择了MESA管程模型）：
@@ -23,10 +74,22 @@
 版权声明：本文为CSDN博主「it_lihongmin」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
 原文链接：https://blog.csdn.net/it_lihongmin/article/details/109190265
 
+
+
 == JVM
 
-Hello.class文件的组成结构
-类加载系统是如何工作的？
+
+=== 类加载系统是如何工作的？
+Java类加载器的作用就是在运行时加载类。Java类加载器基于三个机制：委托、可见性和单一性。委托机制是指将加载一个类的请求交给父类加载 器，如果这个父类加载器不能够找到或者加载这个类，那么再加载它。可见性的原理是子类的加载器可以看见所有的父类加载器加载的类，而父类加载器看不到子类 加载器加载的类。单一性原理是指仅加载一个类一次，这是由委托机制确保子类加载器不会再次加载父类加载器加载过的类。
+————————————————
+版权声明：本文为CSDN博主「懂车天天答」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。
+原文链接：https://blog.csdn.net/weixin_31902781/article/details/114183703
+
+=== 双亲委派机制是什么？为什么叫双亲？
+“双亲委派”这个词估计也就是翻译错误的问题，或者是这样一种可能性。相对于 AppClassLoader，即应用程序类加载器。它加载我们项目（工程）下的 CLASSPATH 路径下的类，它会委托 ExtClassLoader 标准扩展（Extension）类加载器（也有称作扩展类加载器），这时 ExtClassLoader 会再次委派 BootstrapClassLoader 启动类加载器。BootstrapClassLoader 是 Java 虚拟机的第一个类加载器，它不能再向上委托了。因此，根据这个过程，我们发现一共委托了两次，所以“双亲委派”中有一个双。而“亲”字，在中国代表的是亲人的意思，而委托两次，都是交给父类来处理，因此都算得上叫亲人。所以“双亲委派”中的双亲应该就是这样来的。
+
+=== Hello.class文件的组成结构
+
 JVM的实例怎么放？放在那里？
 在程序外如何获取堆栈，在程序里如何获取堆栈？
 方法区放哪些东西？
@@ -35,7 +98,6 @@ GC算法有哪些？
 CMS/G1算法原理分别是啥？分别适合什么样的场景？
 Hello.class文件和反射有什么关系？
 阅读类加载系统的源码（网上90%的文章都是错的，错在哪里？）
-双亲委派机制是什么？为什么叫双亲？
 AOP和栈如何对应起来？
 基本理论：GC设计思路
 回收算法
@@ -367,6 +429,74 @@ zk分布式锁，获取不到锁，注册个监听器即可，不需要不断主
 === Spring
 
 ==== Spring 三级缓存
+
+
+== activity
+
+=== 各个Service的作用
+
+|===
+|Service | introduction
+
+|RepositoryService
+|管理流程定义
+
+|RuntimeService
+|执行管理，包括启动、推进、删除流程实例等操作
+
+|TaskService
+|任务管理
+
+|HistoryService
+|历史管理(执行完的数据的管理)
+
+|IdentityService
+|组织机构管理
+
+|FormService
+|一个可选服务，任务表单管理
+
+|ManagerService
+|
+|===
+
+1：RepositoryService
+
+是Activiti的仓库服务类。所谓的仓库指流程定义文档的两个文件：bpmn文件和流程图片。
+
+1)     产生方式
+
+
+
+2)     可以产生DeploymentBuilder，用来定义流程部署的相关参数
+
+
+
+3)     删除流程定义
+
+
+2：RuntimeService
+
+是activiti的流程执行服务类。可以从这个服务类中获取很多关于流程执行相关的信息。
+
+3：TaskService
+
+是activiti的任务服务类。可以从这个类中获取任务的信息。
+
+4：HistoryService
+
+是activiti的查询历史信息的类。在一个流程执行完成后，这个对象为我们提供查询历史信息。
+
+=== 各个表的内容
+
+https://blog.csdn.net/hqbootstrap1/article/details/82977107
+
+
+
+
+
+
+
 
 
 == 现有应用部署情况
